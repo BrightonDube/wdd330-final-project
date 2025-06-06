@@ -85,4 +85,5 @@ dist
 *.swo
 
 # Project specific
-.windsurfrulesprd.md
+.windsurfrules
+prd.md

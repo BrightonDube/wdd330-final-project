@@ -3,43 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recipe & Nutrition Finder</title>
-    <meta name="description" content="Find recipes and their nutritional information">
+    <meta name="description" content="Discover delicious recipes with detailed nutrition information. Find healthy meal ideas and save your favorites.">
     <meta name="theme-color" content="#4CAF50">
+    <title>Recipe & Nutrition Finder</title>
     
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="src/assets/icons/favicon.svg">
-    <link rel="alternate icon" type="image/png" href="src/assets/icons/favicon-32x32.png" sizes="32x32">
-    <link rel="apple-touch-icon" href="src/assets/icons/apple-touch-icon.png">
-    <link rel="manifest" href="site.webmanifest">
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Recipe Finder">
+    <link rel="apple-touch-icon" href="src/assets/icons/icon-192x192.png">
     
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-    
-    <!-- Mobile-first CSS -->
+    <!-- Styles -->
     <link rel="stylesheet" href="src/styles/main.css">
-    <!-- Desktop CSS (applies at 769px and above) -->
-    <link rel="stylesheet" href="src/styles/desktop.css" media="(min-width: 769px)">
+    <link rel="stylesheet" media="screen and (min-width: 769px)" href="src/styles/desktop.css">
+    
+    <!-- Icons & Fonts -->
+    <link rel="icon" type="image/svg+xml" href="src/assets/icons/favicon.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="src/styles/main.css" as="style">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://api.edamam.com">
+    <link rel="dns-prefetch" href="https://trackapi.nutritionix.com">
 </head>
 <body>
-    <header>
-        <h1>Recipe & Nutrition Finder</h1>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search for recipes...">
-            <button id="searchButton" class="primary">Search</button>
+    <header class="header">
+        <div class="container">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <h1>Recipe & Nutrition Finder</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="#" class="nav-link active">Search</a></li>
+                    <li><a href="#favorites" class="nav-link">Favorites</a></li>
+                </ul>
+            </nav>
         </div>
     </header>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h2>Discover Delicious & Nutritious Recipes</h2>
+            <p>Find the perfect recipe for any meal, with detailed nutritional information</p>
+            
+            <div class="search-container">
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="Search for recipes..." aria-label="Search for recipes">
+                    <button id="search-btn">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <main>
-        <section id="results">
-            <!-- Recipe results will be displayed here -->
-        </section>
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Filters -->
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="vegetarian">Vegetarian</button>
+                <button class="filter-btn" data-filter="vegan">Vegan</button>
+                <button class="filter-btn" data-filter="gluten-free">Gluten Free</button>
+                <button class="filter-btn" data-filter="low-carb">Low Carb</button>
+            </div>
+            
+            <!-- Loading Indicator -->
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Loading recipes...</p>
+            </div>
+            
+            <!-- Recipes Grid -->
+            <div class="recipes-grid" id="recipes-grid">
+                <!-- Recipe cards will be dynamically inserted here -->
+                <div class="no-recipes">
+                    <i class="fas fa-search"></i>
+                    <h3>No recipes found</h3>
+                    <p>Try searching for a recipe or browse by category</p>
+                </div>
+            </div>
+        </div>
     </main>
 
-    <footer>
-        <p>&copy; 2025 Recipe Finder</p>
+    <!-- Install App Banner -->
+    <div id="installBanner" class="install-banner">
+        <div class="install-content">
+            <img src="src/assets/icons/icon-192x192.png" alt="Recipe Finder" class="app-icon">
+            <div class="install-text">
+                <h3>Install Recipe Finder</h3>
+                <p>Add to your home screen for quick access</p>
+            </div>
+        </div>
+        <button id="installButton" class="btn-install">Install</button>
+        <button id="dismissInstall" class="btn-dismiss" aria-label="Dismiss">&times;</button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <p>Making healthy eating simple and delicious</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#favorites">Favorites</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4>Contact Us</h4>
+                    <p><i class="fas fa-envelope"></i> contact@recipefinder.com</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="Pinterest"><i class="fab fa-pinterest"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 Recipe & Nutrition Finder. All rights reserved.</p>
+                <div class="legal-links">
+                    <a href="#privacy">Privacy Policy</a>
+                    <span>|</span>
+                    <a href="#terms">Terms of Service</a>
+                </div>
+            </div>
+        </div>
     </footer>
 
-    <script src="src/scripts/main.js"></script>
+    <!-- Recipe Detail Modal -->
+    <div id="recipe-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="recipe-detail">
+                <!-- Recipe details will be inserted here by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="src/js/main.js" type="module"></script>
 </body>
 </html>
