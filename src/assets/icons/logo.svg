@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background Circle -->
+    <circle cx="100" cy="100" r="95" fill="#F8F9FA" stroke="#4CAF50" stroke-width="10"/>
+    
+    <!-- Fork -->
+    <path d="M85 40L90 45V75L70 95L65 90L85 70V40Z" fill="#4CAF50"/>
+    <path d="M65 90L60 85L70 75L75 80L65 90Z" fill="#FF9800"/>
+    <path d="M90 45H100V55H90V45Z" fill="#4CAF50"/>
+    
+    <!-- Apple -->
+    <path d="M130 90C130 85 132 80 135 75C132 73 128 70 125 70C120 70 115 75 110 75C105 75 100 70 95 70C90 70 85 75 85 80C85 80 90 90 100 100C110 90 115 85 115 85C115 85 120 90 125 90C128 90 130 85 130 90Z" fill="#4CAF50"/>
+    <path d="M120 60C123 57 125 53 125 50C122 50 118 52 115 55C112 58 110 62 110 65C113 65 117 63 120 60Z" fill="#FF9800"/>
+    
+    <!-- Leaf -->
+    <path d="M135 75C140 80 140 85 135 90C130 85 125 80 125 75C130 73 133 75 135 75Z" fill="#FF9800"/>
+</svg>
