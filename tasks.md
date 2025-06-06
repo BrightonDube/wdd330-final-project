@@ -14,7 +14,6 @@ This document outlines the complete development roadmap organized into weekly sp
 2. [ ] Initialize with README.md
 3. [ ] Setup `.eslintrc.json` with Airbnb style guide
 4. [ ] Configure Prettier for formatting
-5. [ ] Add Tailwind CSS
 6. [ ] Setup basic HTML structure in `index.html`
 7. [ ] Create `/src` directory structure:
    1. [ ] `/components`

@@ -1,51 +1,44 @@
-# 🍽️ Recipe & Nutrition Finder
+# Recipe & Nutrition Finder
 
-A responsive web application for finding recipes and their nutritional information using vanilla JavaScript, HTML5, and CSS3.
+A vanilla JavaScript application for finding recipes and viewing their nutritional information. This project is built with pure HTML, CSS, and JavaScript, following modern web standards and best practices.
 
-## ✨ Features
+## Features
 
-- 🔍 Search for recipes by name or ingredients
-- 📊 View detailed nutritional information
-- ⚖️ Scale recipe servings
-- ❤️ Save favorite recipes (stored in localStorage)
-- 📱 Fully responsive design
-- ♿ Accessible interface
-- 🚀 Fast and lightweight
+- Search for recipes by keywords
+- Filter recipes by dietary preferences
+- View detailed nutritional information
+- Scale recipe servings
+- Save favorite recipes (local storage)
+- Responsive design for all devices
 
-## 🛠️ Setup
+## Getting Started
 
 1. Clone this repository
 2. Open `index.html` in a modern web browser
-3. No build step required!
+3. Start searching for recipes!
 
-## 📚 Technologies Used
-
-- Vanilla JavaScript (ES6+)
-- HTML5
-- CSS3 (with Flexbox/Grid)
-- [Edamam Recipe Search API](https://www.edamam.com/)
-- [Nutritionix API](https://www.nutritionix.com/)
-
-## 🌐 Browser Support
-
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-
-## 📝 Project Structure
+## Project Structure
 
 ```
-project/
+├── index.html          # Main HTML file
 ├── src/
-│   ├── components/    # UI components
-│   ├── modules/       # Application modules
-│   ├── utils/         # Utility functions
-│   └── styles/        # CSS files
-├── index.html         # Main HTML file
-└── README.md          # This file
+│   ├── components/     # Reusable UI components
+│   ├── modules/        # Application modules
+│   ├── styles/         # CSS files
+│   └── utils/          # Utility functions
+├── .eslintrc.json      # ESLint configuration
+├── .prettierrc         # Prettier configuration
+└── README.md           # This file
 ```
 
-## 📜 License
+## Browser Support
 
-MIT
+The application is tested on the latest versions of:
+- Google Chrome
+- Mozilla Firefox
+- Microsoft Edge
+- Safari
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

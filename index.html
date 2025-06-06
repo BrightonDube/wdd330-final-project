@@ -1,61 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Find delicious recipes with detailed nutritional information. Search by ingredients or meal type.">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Recipe & Nutrition Finder</title>
-    
-    <!-- Favicon -->
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    
-    <!-- CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
-    <link rel="stylesheet" href="src/styles/main.css">
-    
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body class="font-sans bg-gray-50 min-h-screen">
-    <header class="bg-white shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <h1 class="text-3xl font-bold text-gray-900">🍽️ Recipe & Nutrition Finder</h1>
-        </div>
+    <meta
+      name="description"
+      content="Find delicious recipes with detailed nutritional information"
+    />
+    <!-- Tailwind CSS via CDN (no Node.js required) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                50: '#f0f9ff',
+                100: '#e0f2fe',
+                200: '#bae6fd',
+                300: '#7dd3fc',
+                400: '#38bdf8',
+                500: '#0ea5e9',
+                600: '#0284c7',
+                700: '#0369a1',
+                800: '#075985',
+                900: '#0c4a6e',
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      /* Custom styles can go here */
+      body {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      main {
+        flex: 1;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50">
+    <header class="bg-white shadow">
+      <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+        <h1 class="text-3xl font-bold text-gray-900">Recipe & Nutrition Finder</h1>
+      </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <section id="search-section" class="mb-8">
-            <div class="bg-white p-6 rounded-lg shadow">
-                <div class="flex flex-col md:flex-row gap-4">
-                    <input type="text" 
-                           id="search-input" 
-                           placeholder="Search for recipes..." 
-                           class="flex-1 p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    <button id="search-button" 
-                            class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-md transition duration-150 ease-in-out">
-                        Search
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <section id="results" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Recipe cards will be dynamically inserted here -->
-            <div class="text-center text-gray-500 py-12">
-                <p>Search for recipes to get started!</p>
-            </div>
-        </section>
+    <main class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+      <div id="app" class="space-y-8">
+        <!-- App content will be dynamically inserted here -->
+        <div class="text-center py-12">
+          <h2 class="text-2xl font-semibold text-gray-800">Welcome to Recipe Finder</h2>
+          <p class="mt-2 text-gray-600">Start by searching for a recipe above</p>
+        </div>
+      </div>
     </main>
 
-    <footer class="bg-white border-t border-gray-200 mt-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <p class="text-center text-gray-500 text-sm">
-                &copy; 2025 Recipe & Nutrition Finder. All rights reserved.
-            </p>
-        </div>
+    <footer class="bg-white border-t border-gray-200 mt-8">
+      <div class="max-w-7xl mx-auto py-6 px-4 overflow-hidden sm:px-6 lg:px-8">
+        <p class="text-center text-base text-gray-500">
+          &copy; 2025 Recipe Finder. All rights reserved.
+        </p>
+      </div>
     </footer>
 
-    <!-- JavaScript -->
-    <script type="module" src="src/main.js"></script>
-</body>
+    <!-- JavaScript modules will be loaded here -->
+    <script type="module" src="./src/main.js"></script>
+  </body>
 </html>
