@@ -1,3 +1,5 @@
+/* Mobile-First Base Styles */
+
 /* Basic Reset */
 * {
     margin: 0;
@@ -9,82 +11,75 @@
 body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
-    padding: 20px;
+    padding: 15px;
+    margin: 0 auto;
+    color: #333;
+}
+
+/* Layout */
+header, main, footer {
+    width: 100%;
     max-width: 1200px;
     margin: 0 auto;
 }
 
-/* Header Styles */
+/* Header */
 header {
     text-align: center;
-    margin-bottom: 30px;
-    padding: 20px 0;
+    padding: 15px 0;
+    margin-bottom: 20px;
     border-bottom: 1px solid #eee;
 }
 
 h1 {
-    color: #333;
-    margin-bottom: 20px;
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    color: #2c3e50;
 }
 
 /* Search Container */
 .search-container {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     gap: 10px;
-    margin-top: 20px;
+    margin: 15px 0;
 }
 
 #searchInput {
-    padding: 10px;
-    width: 300px;
-    max-width: 100%;
+    padding: 12px;
+    width: 100%;
     border: 1px solid #ddd;
     border-radius: 4px;
+    font-size: 1rem;
 }
 
 button {
-    padding: 10px 20px;
+    padding: 12px;
     background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-}
-
-button:hover {
-    background-color: #45a049;
+    font-size: 1rem;
+    width: 100%;
 }
 
 /* Results Section */
 #results {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: 1fr;
     gap: 20px;
-    padding: 20px 0;
+    padding: 15px 0;
 }
 
 /* Footer */
 footer {
     text-align: center;
-    margin-top: 40px;
-    padding: 20px 0;
+    margin-top: 30px;
+    padding: 15px 0;
     border-top: 1px solid #eee;
     color: #666;
+    font-size: 0.9rem;
 }
 
-/* Responsive Design */
-@media (max-width: 600px) {
-    .search-container {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    #searchInput {
-        width: 100%;
-    }
-    
-    button {
-        width: 100%;
-    }
-}
+/* Desktop styles are loaded via separate stylesheet for better performance */
