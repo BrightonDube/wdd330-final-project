@@ -1,0 +1,45 @@
+/* CSS Variables - Theme Colors and Common Values */
+:root {
+    /* Colors */
+    --primary: #4CAF50;
+    --primary-dark: #2E7D32;
+    --secondary: #FF9800;
+    --secondary-dark: #F57C00;
+    --accent: #03A9F4;
+    --accent-dark: #0288D1;
+    --favorite: #FF9800;
+    
+    /* Text colors */
+    --text: #333333;
+    --text-light: #666666;
+    
+    /* Backgrounds */
+    --light-gray: #F5F5F5;
+    --white: #FFFFFF;
+    
+    /* Borders and shadows */
+    --border: #E0E0E0;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --shadow-medium: 0 5px 15px rgba(0, 0, 0, 0.15);
+    --shadow-large: 0 10px 30px rgba(0, 0, 0, 0.2);
+    
+    /* Animation */
+    --transition: all 0.3s ease;
+    
+    /* Spacing */
+    --container-padding: 1rem;
+    --container-padding-desktop: 2rem;
+    
+    /* Border radius */
+    --radius-small: 4px;
+    --radius-medium: 8px;
+    --radius-large: 16px;
+    --radius-pill: 50px;
+}
+
+/* Media query variables */
+@media (min-width: 768px) {
+    :root {
+        --container-padding: var(--container-padding-desktop);
+    }
+}

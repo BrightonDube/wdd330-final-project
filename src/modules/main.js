@@ -1,10 +1,17 @@
-// Wait for the DOM to be fully loaded
-import { searchRecipes, getRecipeNutrition, getRecipeById, getSimilarRecipes } from './api.js';
+// Main app logic: orchestration, state, event listeners only
+// Edamam API: Only /search endpoint is supported (Meal Planner Plan)
+// Spoonacular API: Only /recipes/complexSearch and /recipes/{id}/nutritionWidget.json endpoints are allowed
+import { searchEdamamRecipes, getEdamamRecipeById, searchSpoonacularRecipes, getSpoonacularRecipeNutrition } from './api.js';
 import { toggleFavorite, isFavorite, getDetailedFavorites } from './storage.js';
+import { createRecipeCard } from '../components/recipeCard.js';
+import { createRecipeDetailMarkup } from '../components/recipeDetail.js';
+import { showLoading, showError } from '../components/loading.js';
+import { initializeFilters, applyFilters } from '../components/filters.js';
+// Add other imports as needed (e.g., debounce)
 
 // DOM Elements
-const searchInput = document.getElementById('searchInput');
-const searchButton = document.getElementById('searchButton');
+const searchInput = document.getElementById('search-input');
+const searchButton = document.getElementById('search-btn');
 const resultsContainer = document.getElementById('results');
 const loadingElement = document.getElementById('loading');
 const noResultsElement = document.getElementById('no-results');
@@ -23,6 +30,7 @@ function init() {
   setupEventListeners();
   loadInitialRecipes();
   updateActiveLink();
+  initializeFilters();
 }
 
 // Set up event listeners
@@ -91,10 +99,18 @@ function handleFilterClick(button) {
 }
 
 // Display recipes in the grid
+function updateRecipeCount(count) {
+  const recipeCount = document.getElementById('recipe-count');
+  if (recipeCount) {
+    recipeCount.textContent = `${count} ${count === 1 ? 'recipe' : 'recipes'} found`;
+  }
+}
+
 function displayRecipes(recipes) {
   if (!recipes || recipes.length === 0) {
     noResultsElement.style.display = 'block';
     resultsContainer.innerHTML = '';
+    updateRecipeCount(0);
     return;
   }
   
@@ -110,215 +126,40 @@ function displayRecipes(recipes) {
   
   // Update favorite buttons
   updateFavoriteButtons();
+  updateRecipeCount(recipes.length);
 }
 
-// Create a recipe card element
-function createRecipeCard(recipe) {
-  const isFav = isFavorite(recipe.uri);
-  const cookingTime = recipe.totalTime ? `${recipe.totalTime} min` : 'N/A';
-  const calories = recipe.calories ? Math.round(recipe.calories / recipe.yield) : 'N/A';
-  
-  return `
-    <article class="recipe-card" data-id="${recipe.uri}">
-      <div class="recipe-image">
-        <img src="${recipe.image || 'src/assets/images/placeholder.jpg'}" alt="${recipe.label}">
-        <button class="btn-favorite ${isFav ? 'active' : ''}" data-recipe-id="${recipe.uri}" aria-label="${isFav ? 'Remove from favorites' : 'Add to favorites'}">
-          <i class="${isFav ? 'fas' : 'far'} fa-heart"></i>
-        </button>
-        ${recipe.healthLabels?.includes('VEGETARIAN') ? '<span class="recipe-badge">Vegetarian</span>' : ''}
-      </div>
-      <div class="recipe-content">
-        <div class="recipe-header">
-          <h3 class="recipe-title">${recipe.label}</h3>
-          <div class="recipe-meta">
-            <span><i class="fas fa-clock"></i> ${cookingTime}</span>
-            <span><i class="fas fa-fire"></i> ${calories} cal</span>
-            <span><i class="fas fa-utensils"></i> ${recipe.yield || 1} ${recipe.yield === 1 ? 'serving' : 'servings'}</span>
-          </div>
-        </div>
-        <div class="recipe-actions">
-          <a href="${recipe.url}" class="btn btn-outline" target="_blank" rel="noopener noreferrer">View Recipe</a>
-          <button class="btn-favorite ${isFav ? 'active' : ''}" data-recipe-id="${recipe.uri}">
-            <i class="${isFav ? 'fas' : 'far'} fa-heart"></i>
-          </button>
-        </div>
-      </div>
-    </article>
-  `;
-}
-
-// Show recipe details in modal
+// Show recipe details in modal (modular, unified Edamam/Spoonacular logic)
 async function showRecipeDetails(recipe) {
   showLoading(true, 'Loading recipe details...');
-  
   try {
-    // Get full recipe details
-    const fullRecipe = await getRecipeById(recipe.uri);
-    const nutrition = await getRecipeNutrition(fullRecipe);
-    const similarRecipes = await getSimilarRecipes(fullRecipe);
-    
-    // Create modal content
-    modalContent.innerHTML = createRecipeDetailMarkup(fullRecipe, nutrition, similarRecipes);
-    
-    // Show the modal
+    // Detect Edamam vs Spoonacular
+    // Edamam: uri starts with 'http', Spoonacular: has numeric id
+    let detailMarkup = '';
+    if (recipe.uri && recipe.uri.startsWith('http')) {
+      // Edamam
+      let fullRecipe = recipe;
+      if (!recipe.ingredientLines) {
+        fullRecipe = await getEdamamRecipeById(recipe.uri);
+      }
+      // Nutrition from Edamam recipe object
+      detailMarkup = createRecipeDetailMarkup(fullRecipe, fullRecipe.totalNutrients, []);
+    } else if (recipe.id) {
+      // Spoonacular
+      const nutrition = await getSpoonacularRecipeNutrition(recipe.id);
+      detailMarkup = createRecipeDetailMarkup(recipe, nutrition, []);
+    } else {
+      throw new Error('Unknown recipe source.');
+    }
+    modalContent.innerHTML = detailMarkup;
     modal.classList.add('show');
     document.body.style.overflow = 'hidden';
-    
-    // Add event listeners for the new elements
-    setupRecipeDetailListeners(fullRecipe);
   } catch (error) {
     console.error('Error showing recipe details:', error);
     showError('Failed to load recipe details. Please try again.');
   } finally {
     showLoading(false);
   }
-}
-
-// Create HTML for recipe details
-function createRecipeDetailMarkup(recipe, nutrition, similarRecipes) {
-  const isFav = isFavorite(recipe.uri);
-  
-  return `
-    <div class="recipe-detail">
-      <!-- Recipe Header -->
-      <div class="recipe-detail-header">
-        <h2>${recipe.label}</h2>
-        <p class="recipe-source">Source: ${recipe.source}</p>
-        <div class="recipe-meta">
-          <span><i class="fas fa-clock"></i> ${recipe.totalTime || 'N/A'} min</span>
-          <span><i class="fas fa-utensils"></i> ${recipe.yield || 1} ${recipe.yield === 1 ? 'serving' : 'servings'}</span>
-          <span><i class="fas fa-fire"></i> ${Math.round(recipe.calories / recipe.yield)} cal/serving</span>
-          <button class="btn-favorite ${isFav ? 'active' : ''}" data-recipe-id="${recipe.uri}">
-            <i class="${isFav ? 'fas' : 'far'} fa-heart"></i>
-            ${isFav ? 'Saved' : 'Save Recipe'}
-          </button>
-        </div>
-      </div>
-      
-      <div class="recipe-detail-content">
-        <!-- Recipe Image and Summary -->
-        <div class="recipe-summary">
-          <div class="recipe-image-large">
-            <img src="${recipe.image}" alt="${recipe.label}">
-          </div>
-          
-          <!-- Health Labels -->
-          ${recipe.healthLabels?.length ? `
-            <div class="recipe-tags">
-              ${recipe.healthLabels.slice(0, 5).map(label => `
-                <span class="tag">${label}</span>
-              `).join('')}
-            </div>
-          ` : ''}
-          
-          <!-- Nutrition Summary -->
-          ${nutrition ? `
-            <div class="nutrition-summary">
-              <h3>Nutrition per serving</h3>
-              <div class="nutrition-grid">
-                <div class="nutrition-item">
-                  <span class="nutrition-value">${Math.round(nutrition.calories / recipe.yield)}</span>
-                  <span class="nutrition-label">Calories</span>
-                </div>
-                <div class="nutrition-item">
-                  <span class="nutrition-value">${Math.round(nutrition.totalNutrients.PROCNT.quantity / recipe.yield)}g</span>
-                  <span class="nutrition-label">Protein</span>
-                </div>
-                <div class="nutrition-item">
-                  <span class="nutrition-value">${Math.round(nutrition.totalNutrients.FAT.quantity / recipe.yield)}g</span>
-                  <span class="nutrition-label">Fat</span>
-                </div>
-                <div class="nutrition-item">
-                  <span class="nutrition-value">${Math.round(nutrition.totalNutrients.CHOCDF.quantity / recipe.yield)}g</span>
-                  <span class="nutrition-label">Carbs</span>
-                </div>
-              </div>
-            </div>
-          ` : ''}
-        </div>
-        
-        <!-- Ingredients and Instructions -->
-        <div class="recipe-detail-main">
-          <!-- Ingredients -->
-          <div class="ingredients-section">
-            <h3>Ingredients</h3>
-            <ul class="ingredients-list">
-              ${recipe.ingredientLines.map(ingredient => `
-                <li>${ingredient}</li>
-              `).join('')}
-            </ul>
-            
-            <button class="btn btn-primary" id="addToShoppingList">
-              <i class="fas fa-shopping-cart"></i> Add to Shopping List
-            </button>
-          </div>
-          
-          <!-- Instructions -->
-          <div class="instructions-section">
-            <h3>Instructions</h3>
-            ${recipe.url ? `
-              <p>For detailed instructions, please visit the <a href="${recipe.url}" target="_blank" rel="noopener noreferrer">original recipe</a>.</p>
-            ` : '<p>No instructions available.</p>'}
-            
-            ${recipe.shareAs ? `
-              <div class="recipe-actions">
-                <a href="${recipe.url}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
-                  <i class="fas fa-external-link-alt"></i> View Full Recipe
-                </a>
-                <button class="btn btn-secondary" id="printRecipe">
-                  <i class="fas fa-print"></i> Print Recipe
-                </button>
-              </div>
-            ` : ''}
-          </div>
-        </div>
-      </div>
-      
-      <!-- Similar Recipes -->
-      ${similarRecipes?.length ? `
-        <div class="similar-recipes">
-          <h3>You Might Also Like</h3>
-          <div class="recipe-grid">
-            ${similarRecipes.slice(0, 3).map(recipe => createRecipeCard(recipe)).join('')}
-          </div>
-        </div>
-      ` : ''}
-    </div>
-  `;
-}
-
-// Setup event listeners for recipe detail page
-function setupRecipeDetailListeners(recipe) {
-  // Favorite button
-  const favButton = document.querySelector('.recipe-detail .btn-favorite');
-  if (favButton) {
-    favButton.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const newFavState = toggleFavorite(recipe);
-      updateFavoriteButton(favButton, newFavState);
-    });
-  }
-  
-  // Print button
-  const printButton = document.getElementById('printRecipe');
-  if (printButton) {
-    printButton.addEventListener('click', () => window.print());
-  }
-  
-  // Add to shopping list
-  const addToListButton = document.getElementById('addToShoppingList');
-  if (addToListButton) {
-    addToListButton.addEventListener('click', () => addToShoppingList(recipe));
-  }
-  
-  // Similar recipes
-  document.querySelectorAll('.similar-recipes .recipe-card').forEach((card, index) => {
-    card.addEventListener('click', (e) => {
-      e.preventDefault();
-      closeRecipeModal();
-      showRecipeDetails(recipe);
-    });
-  });
 }
 
 // Close recipe modal
@@ -510,9 +351,14 @@ function showError(message) {
     <i class="fas fa-exclamation-triangle"></i>
     <h3>Something went wrong</h3>
     <p>${message}</p>
-    <button class="btn btn-primary" onclick="window.location.reload()">Try Again</button>
+    <button class="btn btn-primary" id="try-again-btn">Try Again</button>
   `;
   noResultsElement.style.display = 'block';
+  // Remove any previous listeners to avoid stacking
+  const tryAgainBtn = document.getElementById('try-again-btn');
+  if (tryAgainBtn) {
+    tryAgainBtn.onclick = () => window.location.reload();
+  }
 }
 
 // Initialize the app when DOM is loaded
@@ -534,3 +380,103 @@ window.addEventListener('hashchange', () => {
     loadInitialRecipes();
   }
 });
+
+// --- Service Worker Logic (inlined from sw.js) ---
+if ('serviceWorker' in navigator) {
+  // Service worker code as a string
+  const swCode = `
+    const CACHE_NAME = 'recipe-finder-v1';
+    const ASSETS_TO_CACHE = [
+      '/',
+      '/index.html',
+      '/src/styles/main.css',
+      '/src/styles/desktop.css',
+      '/src/modules/main.js',
+      '/src/modules/api.js',
+      '/src/modules/storage.js',
+      '/src/assets/icons/logo.svg',
+      '/src/assets/images/placeholder.jpg',
+      'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap',
+      'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css'
+    ];
+
+    self.addEventListener('install', event => {
+      event.waitUntil(
+        caches.open(CACHE_NAME)
+          .then(cache => {
+            return cache.addAll(ASSETS_TO_CACHE);
+          })
+      );
+    });
+
+    self.addEventListener('activate', event => {
+      event.waitUntil(
+        caches.keys().then(cacheNames => {
+          return Promise.all(
+            cacheNames.filter(name => name !== CACHE_NAME).map(name => caches.delete(name))
+          );
+        })
+      );
+    });
+
+    self.addEventListener('fetch', event => {
+      if (!event.request.url.startsWith(self.location.origin)) {
+        return;
+      }
+      if (event.request.url.includes('/api/')) {
+        event.respondWith(
+          fetch(event.request)
+            .then(response => {
+              const responseToCache = response.clone();
+              caches.open(CACHE_NAME).then(cache => { cache.put(event.request, responseToCache); });
+              return response;
+            })
+            .catch(() => caches.match(event.request))
+        );
+      } else {
+        event.respondWith(
+          caches.match(event.request)
+            .then(cachedResponse => {
+              if (cachedResponse) return cachedResponse;
+              return fetch(event.request)
+                .then(response => {
+                  if (!response || response.status !== 200 || response.type !== 'basic') return response;
+                  const responseToCache = response.clone();
+                  caches.open(CACHE_NAME).then(cache => { cache.put(event.request, responseToCache); });
+                  return response;
+                });
+            })
+        );
+      }
+    });
+
+    self.addEventListener('message', event => {
+      if (event.data && event.data.type === 'CLEAR_CACHE') {
+        caches.keys().then(cacheNames => {
+          return Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
+        });
+      }
+    });
+
+    self.addEventListener('sync', event => {
+      if (event.tag === 'sync-favorites') {
+        event.waitUntil(syncFavorites());
+      }
+    });
+
+    async function syncFavorites() {
+      // Placeholder for background sync logic
+      console.log('Syncing favorites in the background...');
+    }
+  `;
+  const swBlob = new Blob([swCode], { type: 'application/javascript' });
+  const swUrl = URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swUrl)
+    .then(reg => {
+      console.log('Service worker registered (inlined)', reg);
+    })
+    .catch(err => {
+      console.error('Service worker registration failed', err);
+    });
+}
+// --- End Service Worker Logic ---

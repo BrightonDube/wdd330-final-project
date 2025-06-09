@@ -27,7 +27,7 @@
     <link rel="preload" href="src/styles/main.css" as="style">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="https://api.edamam.com">
-    <link rel="dns-prefetch" href="https://trackapi.nutritionix.com">
+
 </head>
 <body>
     <header class="header">
@@ -50,14 +50,14 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="container">
-            <h2>Discover Delicious & Nutritious Recipes</h2>
-            <p>Find the perfect recipe for any meal, with detailed nutritional information</p>
+            <h2>Discover Healthy Recipes with Complete Nutrition Info</h2>
+            <p>Find delicious recipes and get detailed nutritional information all in one place. Make informed food choices and maintain healthier eating habits.</p>
             
             <div class="search-container">
                 <div class="search-box">
-                    <input type="text" id="search-input" placeholder="Search for recipes..." aria-label="Search for recipes">
+                    <input type="text" id="search-input" placeholder="pasta" aria-label="Search for recipes">
                     <button id="search-btn">
-                        <i class="fas fa-search"></i> Search
+                        Find Recipes
                     </button>
                 </div>
             </div>
@@ -67,21 +67,49 @@
     <!-- Main Content -->
     <main class="main-content">
         <div class="container">
-            <!-- Filters -->
-            <div class="filters">
-                <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="vegetarian">Vegetarian</button>
-                <button class="filter-btn" data-filter="vegan">Vegan</button>
-                <button class="filter-btn" data-filter="gluten-free">Gluten Free</button>
-                <button class="filter-btn" data-filter="low-carb">Low Carb</button>
+            <div class="filters-container">
+                <div class="filters">
+                    <button class="filter-btn" id="filterBtn">
+                        <i class="fas fa-filter" aria-hidden="true"></i> Dietary filters <i class="fas fa-angle-down"></i>
+                    </button>
+                    <div class="filter-dropdown" id="filterDropdown" hidden>
+                        <label class="filter-option"><input type="checkbox" class="filter-checkbox" data-filter="vegetarian"> Vegetarian</label>
+                        <label class="filter-option"><input type="checkbox" class="filter-checkbox" data-filter="vegan"> Vegan</label>
+                        <label class="filter-option"><input type="checkbox" class="filter-checkbox" data-filter="gluten-free"> Gluten-Free</label>
+                        <label class="filter-option"><input type="checkbox" class="filter-checkbox" data-filter="low-carb"> Low-Carb</label>
+                    </div>
+                </div>
+                <span class="recipe-count" id="recipe-count" data-component-name="&lt;span /&gt;"></span>
             </div>
-            
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var dropdown = document.getElementById('filtersDropdown');
+    var btn = document.getElementById('filterDropdownBtn');
+    var caret = document.getElementById('filterCaret');
+    var filterOptions = document.getElementById('filterOptions');
+    function closeDropdown(e) {
+      if (!dropdown.contains(e.target)) {
+        dropdown.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+    }
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var isOpen = dropdown.classList.toggle('open');
+      btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+    document.addEventListener('click', closeDropdown);
+    dropdown.addEventListener('click', function(e) { e.stopPropagation(); });
+  });
+</script>
+
+
             <!-- Loading Indicator -->
             <div id="loading" class="loading">
                 <div class="spinner"></div>
                 <p>Loading recipes...</p>
             </div>
-            
+
             <!-- Recipes Grid -->
             <div class="recipes-grid" id="recipes-grid">
                 <!-- Recipe cards will be dynamically inserted here -->
@@ -94,20 +122,7 @@
         </div>
     </main>
 
-    <!-- Install App Banner -->
-    <div id="installBanner" class="install-banner">
-        <div class="install-content">
-            <img src="src/assets/icons/icon-192x192.png" alt="Recipe Finder" class="app-icon">
-            <div class="install-text">
-                <h3>Install Recipe Finder</h3>
-                <p>Add to your home screen for quick access</p>
-            </div>
-        </div>
-        <button id="installButton" class="btn-install">Install</button>
-        <button id="dismissInstall" class="btn-dismiss" aria-label="Dismiss">&times;</button>
-    </div>
-
-    <!-- Footer -->
+        <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">

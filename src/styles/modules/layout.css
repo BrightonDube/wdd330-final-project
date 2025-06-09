@@ -1,0 +1,80 @@
+/* Layout Components */
+
+/* Container */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+}
+
+/* Main Content */
+.main-content {
+    padding: 3rem 0;
+}
+
+/* Grid Layouts */
+.recipes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    padding-bottom: 2rem;
+}
+
+.two-columns {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+.three-columns {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+.four-columns {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+/* Standard content section */
+.content-section {
+    padding-block: 2rem;
+}
+
+/* Responsive Layout Adjustments */
+@media (min-width: 768px) {
+    .main-content {
+        padding: 5rem 0;
+    }
+    
+    .recipes-grid {
+        gap: 2.5rem;
+    }
+    
+    .two-columns {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .three-columns {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    
+    .four-columns {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .four-columns {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (min-width: 1440px) {
+    .container {
+        max-width: 1400px;
+    }
+}

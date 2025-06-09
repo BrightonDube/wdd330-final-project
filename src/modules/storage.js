@@ -127,21 +127,24 @@ export const clearFavorites = () => {
 export const getDetailedFavorites = async () => {
   try {
     const favorites = getFavorites();
-    const { getRecipeById } = await import('./api.js');
-    
-    // Fetch full details for each favorite
+    const { getEdamamRecipeById } = await import('./api.js');
+    // Only fetch details for Edamam recipes (uri starts with http)
     const detailedFavorites = await Promise.all(
       favorites.map(async (fav) => {
-        try {
-          const fullRecipe = await getRecipeById(fav.uri);
-          return { ...fav, ...fullRecipe };
-        } catch (error) {
-          console.error(`Error fetching details for ${fav.uri}:`, error);
-          return fav; // Return basic info if details can't be fetched
+        if (fav.uri && fav.uri.startsWith('http')) {
+          try {
+            const fullRecipe = await getEdamamRecipeById(fav.uri);
+            return { ...fav, ...fullRecipe };
+          } catch (error) {
+            console.error(`Error fetching details for ${fav.uri}:`, error);
+            return fav;
+          }
+        } else {
+          // For Spoonacular or others, just return the stored info
+          return fav;
         }
       })
     );
-    
     return detailedFavorites;
   } catch (error) {
     console.error('Error getting detailed favorites:', error);
