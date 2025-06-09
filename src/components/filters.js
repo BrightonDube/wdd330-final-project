@@ -9,7 +9,6 @@ export function initializeFilters() {
     filterBtn.addEventListener('click', (e) => {
       e.preventDefault();
       const isHidden = filterDropdown.hasAttribute('hidden');
-      
       if (isHidden) {
         filterDropdown.removeAttribute('hidden');
         filterBtn.classList.add('active');
@@ -17,11 +16,12 @@ export function initializeFilters() {
         filterDropdown.setAttribute('hidden', '');
         filterBtn.classList.remove('active');
       }
+      e.stopPropagation(); // Prevent outside click from immediately closing
     });
-    
-    // Close dropdown when clicking outside
+
+    // Close dropdown when clicking outside, but only if open
     document.addEventListener('click', (e) => {
-      if (!filterBtn.contains(e.target) && !filterDropdown.contains(e.target)) {
+      if (!filterBtn.contains(e.target) && !filterDropdown.contains(e.target) && !filterDropdown.hasAttribute('hidden')) {
         filterDropdown.setAttribute('hidden', '');
         filterBtn.classList.remove('active');
       }
@@ -66,6 +66,7 @@ export function applyFilters() {
     const recipeCount = document.getElementById('recipe-count');
     if (recipeCount) {
       recipeCount.textContent = `${visibleCount} ${visibleCount === 1 ? 'recipe' : 'recipes'} found`;
+      recipeCount.style.display = '';
     }
   }
 }

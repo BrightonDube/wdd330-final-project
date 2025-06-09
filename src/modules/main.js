@@ -111,6 +111,9 @@ function displayRecipes(recipes) {
     noResultsElement.style.display = 'block';
     resultsContainer.innerHTML = '';
     updateRecipeCount(0);
+    // Ensure recipe count is always visible
+    const recipeCount = document.getElementById('recipe-count');
+    if (recipeCount) recipeCount.style.display = '';
     return;
   }
   
@@ -363,7 +366,68 @@ function showError(message) {
 
 // Initialize the app when DOM is loaded
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
+  document.addEventListener('DOMContentLoaded', () => {
+    // --- Favorites nav link logic ---
+    const navLinks = document.querySelectorAll('.nav-link');
+    const favoritesLink = document.querySelector('.nav-link[href="#favorites"]');
+    const mainContent = document.querySelector('.main-content');
+    const recipesGrid = document.getElementById('recipes-grid');
+    const favoritesSection = document.getElementById('favorites-section'); // Ensure this exists or create it dynamically
+
+    if (favoritesLink) {
+      favoritesLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        navLinks.forEach(link => link.classList.remove('active'));
+        favoritesLink.classList.add('active');
+        // Show favorites section, hide others
+        if (favoritesSection) {
+          favoritesSection.style.display = '';
+          mainContent.style.display = 'none';
+        }
+      });
+    }
+
+    // If user navigates back to Search, show main content
+    const searchLink = document.querySelector('.nav-link[href="#"]');
+    if (searchLink) {
+      searchLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        navLinks.forEach(link => link.classList.remove('active'));
+        searchLink.classList.add('active');
+        if (favoritesSection) favoritesSection.style.display = 'none';
+        if (mainContent) mainContent.style.display = '';
+      });
+    }
+
+    // --- Filter button toggle logic ---
+    const filterBtn = document.getElementById('filterBtn');
+    const filterDropdown = document.getElementById('filterDropdown');
+    if (filterBtn && filterDropdown) {
+      filterBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const isHidden = filterDropdown.hasAttribute('hidden');
+        if (isHidden) {
+          filterDropdown.removeAttribute('hidden');
+          filterBtn.classList.add('active');
+        } else {
+          filterDropdown.setAttribute('hidden', '');
+          filterBtn.classList.remove('active');
+        }
+        e.stopPropagation();
+      });
+      document.addEventListener('click', (e) => {
+        if (!filterBtn.contains(e.target) && !filterDropdown.contains(e.target) && !filterDropdown.hasAttribute('hidden')) {
+          filterDropdown.setAttribute('hidden', '');
+          filterBtn.classList.remove('active');
+        }
+      });
+    }
+
+    // --- Ensure recipe counter is always visible ---
+    const recipeCount = document.getElementById('recipe-count');
+    if (recipeCount) recipeCount.style.display = '';
+    init();
+  });
 } else {
   init();
 }

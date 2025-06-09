@@ -16,9 +16,13 @@
 /* Grid Layouts */
 .recipes-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* auto-fit for better responsiveness */
+    gap: 2rem;
     padding-bottom: 2rem;
+    width: 100%;
+    box-sizing: border-box;
+    align-items: stretch;
+    transition: gap 0.2s;
 }
 
 .two-columns {

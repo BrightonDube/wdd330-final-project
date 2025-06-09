@@ -9,12 +9,16 @@
     height: 100%;
     overflow: hidden;
     position: relative;
+    transition: box-shadow 0.22s cubic-bezier(.4,2,.3,1), transform 0.18s cubic-bezier(.4,2,.3,1);
 }
 
-.recipe-card:hover {
-    transform: translateY(-4px) scale(1.015);
-    box-shadow: var(--shadow-medium);
+.recipe-card:hover, .recipe-card:focus-visible {
+    box-shadow: 0 6px 32px 0 rgba(44,62,80,0.13);
+    transform: translateY(-6px) scale(1.02);
+    outline: 2px solid #4CAF50;
+    outline-offset: 2px;
 }
+
 
 .recipe-card-body {
     padding: 1.2rem;
@@ -64,13 +68,19 @@
     height: 38px;
     display: grid;
     place-items: center;
-    color: #ccc;
+    color: #666;
     font-size: 1.2rem;
     box-shadow: 0 2px 8px rgba(44,62,80,0.10);
     cursor: pointer;
     z-index: 2;
     transition: background 0.2s, color 0.2s, border 0.2s;
+    outline: none;
 }
+.btn-favorite:focus {
+    outline: 2px solid #ff9800;
+    outline-offset: 2px;
+}
+
 
 .btn-favorite.active,
 .btn-favorite:hover {
@@ -96,38 +106,45 @@
 }
 
 .tag.high-protein, .tag[data-type="high-protein"] {
-    background-color: #e3f2fd;
-    color: #2196f3;
+    background-color: #1565c0;
+    color: #fff;
+    /* AAA contrast */
 }
 
 .tag.low-carb, .tag[data-type="low-carb"] {
-    background-color: #f3e5f5;
-    color: #9c27b0;
+    background-color: #7b1fa2;
+    color: #fff;
+    /* AAA contrast */
 }
 
 .tag.gluten-free, .tag[data-type="gluten-free"] {
-    background-color: #e8f5e9;
-    color: var(--primary-dark);
+    background-color: #388e3c;
+    color: #fff;
+    /* AAA contrast */
 }
 
 .tag.balanced, .tag[data-type="balanced"] {
-    background-color: #fff3e0;
-    color: #ff9800;
+    background-color: #ff9800;
+    color: #23272a;
+    /* AA contrast */
 }
 
 .tag.high-fiber, .tag[data-type="high-fiber"] {
-    background-color: #fffde7;
-    color: #ffc107;
+    background-color: #ffc107;
+    color: #23272a;
+    /* AA contrast */
 }
 
 .tag.pescatarian, .tag[data-type="pescatarian"] {
-    background-color: #e0f7fa;
-    color: #00bcd4;
+    background-color: #00838f;
+    color: #fff;
+    /* AAA contrast */
 }
 
 .tag.vegetarian, .tag[data-type="vegetarian"] {
-    background-color: #e8f5e9;
-    color: var(--primary-dark);
+    background-color: #43a047;
+    color: #fff;
+    /* AAA contrast */
 }
 
 .recipe-nutrition {
@@ -141,14 +158,24 @@
     display: block;
     text-align: center;
     padding: 0.75rem;
-    background-color: #f9f9f9;
-    color: var(--text);
+    background-color: #23272a;
+    color: #fff;
     text-decoration: none;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     font-weight: 500;
-    transition: var(--transition);
+    transition: background 0.18s, color 0.18s;
     border-top: 1px solid #f0f0f0;
+    border-radius: 0 0 var(--radius-medium) var(--radius-medium);
+    outline: none;
 }
+.view-details-btn:hover, .view-details-btn:focus {
+    background-color: #ff9800;
+    color: #23272a;
+    text-decoration: underline;
+    outline: 2px solid #ff9800;
+    outline-offset: 2px;
+}
+
 
 .view-details-btn:hover {
     background-color: #f0f0f0;
